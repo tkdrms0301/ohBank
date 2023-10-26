@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Myprofile">
+
+    <ImageView
+        android:layout_width="65dp"
+        android:layout_height="74dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/addben" />
+
+    <TextView
+        android:layout_width="75dp"
+        android:layout_height="42dp"
+        android:layout_marginLeft="115dp"
+        android:layout_marginTop="72dp"
+        android:text="내 정보"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="214dp"
+        android:layout_height="63dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="100dp"
+        android:text="   My Profile"
+        android:layout_marginTop="220dp"
+        android:fontFamily="@font/muli_extrabold"
+        android:textSize="30sp"
+        tools:layout_editor_absoluteX="78dp"
+        tools:layout_editor_absoluteY="226dp" />
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="250dp"
+        android:layout_height="44dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/textView"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/muli_extrabold"
+        android:textSize="20sp"
+        tools:layout_editor_absoluteX="78dp"
+        tools:layout_editor_absoluteY="226dp" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_below="@id/textView1"
+        android:layout_width="250dp"
+        android:layout_height="44dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/muli_extrabold"
+        android:textSize="20sp"
+        tools:layout_editor_absoluteX="78dp"
+        tools:layout_editor_absoluteY="226dp" />
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_below="@id/textView2"
+        android:layout_width="250dp"
+        android:layout_height="44dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/muli_extrabold"
+        android:textSize="20sp"
+        tools:layout_editor_absoluteX="78dp"
+        tools:layout_editor_absoluteY="226dp" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_below="@id/textView3"
+        android:layout_width="250dp"
+        android:layout_height="44dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/muli_extrabold"
+        android:textSize="20sp"
+        tools:layout_editor_absoluteX="78dp"
+        tools:layout_editor_absoluteY="226dp" />
+
+    <ImageView
+        android:layout_width="118dp"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom"
+        android:src="@drawable/bank"
+        android:layout_alignParentBottom="true"
+        android:translationX="145dp" />
+</RelativeLayout>
