@@ -1,2 +1,4 @@
 uploads
 lib/api/Qna/attack.js
+*.json
+*.jadxmd
