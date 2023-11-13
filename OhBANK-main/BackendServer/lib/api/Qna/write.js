@@ -25,11 +25,7 @@ router.post("/", decryptAuthRequest, (req, res) => {
   var r = new Response();
   var today = new Date();
   var now =
-    today.getFullYear() +
-    "-" +
-    (today.getMonth() + 1) +
-    "-" +
-    (today.getDate() + 1);
+    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
   console.log(req.body.file_id_list);
   if (req.body.file_id_list) {
     Model.qna

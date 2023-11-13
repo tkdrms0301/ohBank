@@ -14,51 +14,58 @@ const { Op, literal } = require("sequelize");
  * @middleware
  * @param                            - qna_id
  * @return                           - Qna list
-*/
-router.post("/", decryptRequest, (req, res) => {
-    var r = new Response();
-    let qna_id = req.body.qna_id;
-    
-    Model.qna.findOne({
-        where : {
-            id : literal("id="+qna_id)
-        },
-        replacements: {
-            qna_id: qna_id
-        },
-        attributes: ["title", "content", "write_at"],
+ */
+router.post("/", validateUserToken, decryptRequest, (req, res) => {
+  var r = new Response();
+  let qna_id = req.body.qna_id;
+
+  // SQL injection prevention
+  if (!/^\d+$/.test(qna_id)) {
+    r.status = statusCodes.BAD_REQUEST;
+    r.data = {
+      message: "invalid input",
+    };
+    return res.json(encryptResponse(r));
+  }
+
+  Model.qna
+    .findOne({
+      where: {
+        id: qna_id, // Sequelize operator to prevent SQL injection
+        writer_id: req.user_id, // broken access control
+      },
+      attributes: ["title", "content", "write_at"],
     })
     .then((data) => {
-        r.status = statusCodes.SUCCESS;
-        r.data = data;
+      r.status = statusCodes.SUCCESS;
+      r.data = data;
 
-        Model.file.findAll({
-            where: {
-                qna_id: qna_id
-            },
-            attributes: ["id", "file_name"]
+      Model.file
+        .findAll({
+          where: {
+            qna_id: qna_id,
+          },
+          attributes: ["id", "file_name"],
         })
         .then((file_data) => {
-            r.data.dataValues.file = file_data;
-            console.log(r.data.dataValues);
-            return res.json(encryptResponse(r));
+          r.data.dataValues.file = file_data;
+          return res.json(encryptResponse(r));
         })
         .catch((err) => {
-            r.status = statusCodes.SERVER_ERROR;
-            r.data = {
-                message: err.toString(),
-            };
-            return res.json(encryptResponse(r));
+          r.status = statusCodes.SERVER_ERROR;
+          r.data = {
+            message: "invalid input",
+          };
+          return res.json(encryptResponse(r));
         });
     })
     .catch((err) => {
-        r.status = statusCodes.SERVER_ERROR;
-        r.data = {
-            message: err.toString(),
-        };
-        return res.json(encryptResponse(r));
+      r.status = statusCodes.SERVER_ERROR;
+      r.data = {
+        message: "invalid input",
+      };
+      return res.json(encryptResponse(r));
     });
 });
 
-    
 module.exports = router;

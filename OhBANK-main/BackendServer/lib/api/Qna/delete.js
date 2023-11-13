@@ -21,53 +21,77 @@ router.post("/", decryptAuthRequest, (req, res) => {
   let qna_id = req.body.qna_id;
   console.log(qna_id);
 
-  Model.file
-    .findAll({
+  Model.qna
+    .findOne({
       where: {
-        qna_id: qna_id,
+        id: req.body.qna_id,
       },
-      attributes: ["saved_name"],
+      attributes: ["writer_id"],
     })
     .then((data) => {
-      // DB에서 파일 삭제
-      Model.file
-        .destroy({
-          where: {
-            qna_id: qna_id,
-          },
-        })
-        .then((data) => {
-          // QnA 삭제
-          Model.qna
-            .destroy({
-              where: {
-                id: qna_id,
-              },
-            })
-            .then((data) => {
-              r.status = statusCodes.SUCCESS;
-              return res.json(encryptResponse(r));
-            })
-            .catch((err) => {
-              r.status = statusCodes.SERVER_ERROR;
-              r.data = {
-                message: err.toString(),
-              };
-              return res.json(encryptResponse(r));
-            });
-        })
-        .catch((err) => {
-          r.status = statusCodes.SERVER_ERROR;
-          r.data = {
-            message: err.toString(),
-          };
-          return res.json(encryptResponse(r));
-        });
+      if (data.dataValues.writer_id === req.user_id) {
+        Model.file
+          .findAll({
+            where: {
+              qna_id: qna_id,
+            },
+            attributes: ["saved_name"],
+          })
+          .then((data) => {
+            // DB에서 파일 삭제
+            Model.file
+              .destroy({
+                where: {
+                  qna_id: qna_id,
+                },
+              })
+              .then((data) => {
+                // QnA 삭제
+                Model.qna
+                  .destroy({
+                    where: {
+                      id: qna_id,
+                    },
+                  })
+                  .then((data) => {
+                    r.status = statusCodes.SUCCESS;
+                    return res.json(encryptResponse(r));
+                  })
+                  .catch((err) => {
+                    r.status = statusCodes.SERVER_ERROR;
+                    r.data = {
+                      message: "invalid input",
+                    };
+                    return res.json(encryptResponse(r));
+                  });
+              })
+              .catch((err) => {
+                r.status = statusCodes.SERVER_ERROR;
+                r.data = {
+                  message: "invalid input",
+                };
+                return res.json(encryptResponse(r));
+              });
+          })
+          .catch((err) => {
+            r.status = statusCodes.SERVER_ERROR;
+            r.data = {
+              message: "invalid input",
+            };
+            return res.json(encryptResponse(r));
+          });
+      } else {
+        r.status = statusCodes.BAD_REQUEST;
+        r.data = {
+          message: "invalid input",
+        };
+        return res.json(encryptResponse(r));
+      }
     })
     .catch((err) => {
       r.status = statusCodes.SERVER_ERROR;
       r.data = {
-        message: err.toString(),
+        message: "invalid input",
       };
       return res.json(encryptResponse(r));
     });
