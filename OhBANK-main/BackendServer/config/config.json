@@ -1,21 +1,21 @@
 {
   "development": {
     "username": "root",
-    "password": "sk002760",
+    "password": "tkd5957!@#",
     "database": "dvba",
     "host": "localhost",
     "dialect": "mysql"
   },
   "test": {
     "username": "root",
-    "password": "sk002760",
+    "password": "tkd5957!@#",
     "database": "dvba",
     "host": "localhost",
     "dialect": "mysql"
   },
   "production": {
     "username": "root",
-    "password": "sk002760",
+    "password": "tkd5957!@#",
     "database": "dvba",
     "host": "localhost",
     "dialect": "mysql"
