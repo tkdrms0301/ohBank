@@ -22,33 +22,64 @@ const storage = multer.diskStorage({
     cb(null, req.body.path);
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    // Create safe file names
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const santiziedFilename = uniqueSuffix + '-' + file.originalname.replace(/[^a-zA-Z0-9]/g, '_');
+    cb(null, santiziedFilename);
   },
 });
-const upload = multer({ storage: storage });
+
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5, // Limit file size to 5MB
+  },
+  fileFilter: (req, file, cb) => {
+    //Check file extension
+    const allowedExtensions = ['jpg','jpeg','png','pdf']; // List of allowed file extension
+
+    const fileExtension = file.originalname.split('.').pop().toLowerCase();
+    if (!allowedExtensions.includes(fileExtension)) {
+      return cb(new Error('file extension not allowed.'));
+    }
+    cb(null, true);
+  },
+});
+
 router.post("/", upload.single("file"), validateUserToken, (req, res) => {
   var r = new Response();
   let user_id = req.user_id;
-  var filename = req.file.originalname;
-  var savedname = req.file.destination + "/" + filename;
-  Model.file
-    .create({
+
+  try {
+    if (!req.file) {
+      throw new Error('File not provided');
+    }
+
+    const filename = req.file.originalname;
+    const savedname = req.file.destination + "/" + filename;
+  
+  Model.file.create({
       file_name: filename,
       saved_name: savedname,
       user_id: user_id,
-    })
-    .then((data) => {
+    }).then((data) => {
       r.status = statusCodes.SUCCESS;
       r.data = data;
       return res.json(encryptResponse(r));
-    })
-    .catch((err) => {
+    }).catch((err) => {
       r.status = statusCodes.SERVER_ERROR;
       r.data = {
         message: err.toString(),
       };
       return res.json(encryptResponse(r));
     });
+  } catch (err) {
+    r.status = statusCodes.CLIENT_ERROR;
+    r.data = {
+      message: err.toString(),
+    };
+    return res.json(encryptResponse(r));
+  }
 });
 
 module.exports = router;
