@@ -2,6 +2,7 @@ const Model = require("../models/index");
 const Response = require('../lib/Response');
 const statusCodes = require("../lib/statusCodes");
 const jwt = require("jsonwebtoken");
+const { secretKey } = require("../config/jwtTokenSecret");
 
 const SECRET = 'amazing';
 const SECRET_LENGTH = SECRET.length;
@@ -87,7 +88,7 @@ const decryptRequest = function(req, res, next) {
         return res.json(encryptResponse(r));
     }
   
-    jwt.verify(token, "secret", (err, data) => {
+    jwt.verify(token, secretKey, (err, data) => {
         if (err) {
             r.status = statusCodes.FORBIDDEN;
             r.data = {

@@ -5,6 +5,7 @@ var Response = require("../../Response");
 var statusCodes = require("../../statusCodes");
 var { encryptResponse, decryptRequest } = require("../../../middlewares/crypt");
 const jwt = require("jsonwebtoken");
+const { secretKey } = require("../../../config/jwtTokenSecret");
 
 /**
  * Login route
@@ -34,7 +35,7 @@ router.post("/", decryptRequest, (req, res) => {
             username: data.username,
             is_admin: data.is_admin,
           },
-          "secret"
+          secretKey // 가져온 시크릿 키 사용
         );
         r.status = statusCodes.SUCCESS;
         r.data = {

@@ -3,6 +3,7 @@ const Response = require('../lib/Response');
 const statusCodes = require("../lib/statusCodes");
 const jwt = require("jsonwebtoken");
 var { encryptResponse } = require("../middlewares/crypt");
+const { secretKey } = require("../config/jwtTokenSecret");
 
 /**
  * User token validation middleware
@@ -25,7 +26,7 @@ const validateUserToken = function(req, res, next) {
       return res.json(encryptResponse(r));
   }
 
-  jwt.verify(token, "secret", (err, data) => {
+  jwt.verify(token, secretKey, (err, data) => {
       if (err) {
           r.status = statusCodes.FORBIDDEN;
           r.data = {
@@ -76,7 +77,7 @@ const validateAdminToken = function(req, res, next) {
         return res.json(encryptResponse(r));
     }
   
-    jwt.verify(token, "secret", (err, data) => {
+    jwt.verify(token, secretKey, (err, data) => {
         if (err) {
             r.status = statusCodes.FORBIDDEN;
             r.data = {
