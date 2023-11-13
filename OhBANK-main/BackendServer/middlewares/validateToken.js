@@ -1,5 +1,5 @@
 const Model = require("../models/index");
-const Response = require('../lib/Response');
+const Response = require("../lib/Response");
 const statusCodes = require("../lib/statusCodes");
 const jwt = require("jsonwebtoken");
 var { encryptResponse } = require("../middlewares/crypt");
@@ -12,46 +12,49 @@ const { secretKey } = require("../config/jwtTokenSecret");
  * @header authorization             - JWT token
  * @return                           - Calls the next function on success
  */
-const validateUserToken = function(req, res, next) {
+const validateUserToken = function (req, res, next) {
   var r = new Response();
 
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  
+
   if (token == null) {
-      r.status = statusCodes.NOT_AUTHORIZED;
-      r.data = {
-        "message": "Not authorized"
-      }
-      return res.json(encryptResponse(r));
+    r.status = statusCodes.NOT_AUTHORIZED;
+    r.data = {
+      message: "Not authorized",
+    };
+    return res.json(encryptResponse(r));
   }
 
   jwt.verify(token, secretKey, (err, data) => {
-      if (err) {
-          r.status = statusCodes.FORBIDDEN;
-          r.data = {
-              "message": err.toString()
-          }
-          return res.json(encryptResponse(r));
-      }
-      
-      Model.users.findOne({
-          where: {
-              username: data.username
-          },
-          attributes: ["id", "username", "account_number"]
-      }).then((data) => {
-          req.account_number = data.account_number;
-          req.username = data.username;
-          req.user_id = data.id;
-          next();
-      }).catch((err) => {
+    if (err) {
+      r.status = statusCodes.FORBIDDEN;
+      r.data = {
+        message: err.toString(),
+      };
+      return res.json(encryptResponse(r));
+    }
+
+    Model.users
+      .findOne({
+        where: {
+          username: data.username,
+        },
+        attributes: ["id", "username", "account_number"],
+      })
+      .then((data) => {
+        req.account_number = data.account_number;
+        req.username = data.username;
+        req.user_id = data.id;
+        next();
+      })
+      .catch((err) => {
         r.status = statusCodes.SERVER_ERROR;
         r.data = {
-            "message": err.toString()
+          message: err.toString(),
         };
         return res.json(encryptResponse(r));
-    });
+      });
   });
 };
 
@@ -63,56 +66,59 @@ const validateUserToken = function(req, res, next) {
  * @header authorization             - JWT token
  * @return                           - Calls the next function on success
  */
-const validateAdminToken = function(req, res, next) {
-    var r = new Response();
-  
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
-  
-    if (token == null) {
-        r.status = statusCodes.NOT_AUTHORIZED;
-        r.data = {
-            "message": "Not authorized"
-        }
-        return res.json(encryptResponse(r));
+const validateAdminToken = function (req, res, next) {
+  var r = new Response();
+
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (token == null) {
+    r.status = statusCodes.NOT_AUTHORIZED;
+    r.data = {
+      message: "Not authorized",
+    };
+    return res.json(encryptResponse(r));
+  }
+
+  jwt.verify(token, secretKey, (err, data) => {
+    if (err) {
+      r.status = statusCodes.FORBIDDEN;
+      r.data = {
+        message: err.toString(),
+      };
+      return res.json(encryptResponse(r));
     }
-  
-    jwt.verify(token, secretKey, (err, data) => {
-        if (err) {
-            r.status = statusCodes.FORBIDDEN;
-            r.data = {
-                "message": err.toString()
-            }
-            return res.json(encryptResponse(r));
+
+    Model.users
+      .findOne({
+        where: {
+          username: data.username,
+        },
+        attributes: ["account_number", "is_admin"],
+      })
+      .then((data) => {
+        req.account_number = data.account_number;
+        if (!data.is_admin) {
+          r.status = statusCodes.FORBIDDEN;
+          r.data = {
+            message: "Exclusive endpoint for admins only",
+          };
+          return res.json(encryptResponse(r));
+        } else {
+          next();
         }
-        
-        Model.users.findOne({
-            where: {
-                username: data.username
-            },
-            attributes: ["account_number", "is_admin"]
-        }).then((data) => {
-            req.account_number = data.account_number;
-            if (!data.is_admin) {
-                r.status = statusCodes.FORBIDDEN;
-                r.data = {
-                    "message": "Exclusive endpoint for admins only"
-                };
-                return res.json(encryptResponse(r));
-            } else {
-                next();
-            }
-        }).catch((err) => {
-            r.status = statusCodes.SERVER_ERROR;
-            r.data = {
-                "message": err.toString()
-            };
-            return res.json(encryptResponse(r));
-        });
-    });
+      })
+      .catch((err) => {
+        r.status = statusCodes.SERVER_ERROR;
+        r.data = {
+          message: err.toString(),
+        };
+        return res.json(encryptResponse(r));
+      });
+  });
 };
 
-module.exports =  {
-    validateUserToken,
-    validateAdminToken
-}
+module.exports = {
+  validateUserToken,
+  validateAdminToken,
+};
