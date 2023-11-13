@@ -51,10 +51,8 @@
                 android:value=".ViewBeneficiaryAdmin" />
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data
                     android:host="xe1.com"
                     android:scheme="http" />
@@ -65,9 +63,7 @@
         </activity>
         <activity android:name=".ViewBeneficiaryAdmin" />
         <activity android:name=".GetTransactions" />
-        <activity
-            android:name=".ViewBalance"
-            android:exported="true" />
+        <activity android:name=".ViewBalance" />
         <activity android:name=".Dashboard" />
         <activity android:name=".RegisterBank" />
         <activity android:name=".BankLogin" />
