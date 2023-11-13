@@ -2,29 +2,24 @@ const Model = require("../models/index");
 const Response = require('../lib/Response');
 const statusCodes = require("../lib/statusCodes");
 const jwt = require("jsonwebtoken");
+const { secretKey } = require("../config/jwtTokenSecret");
+const { ENC_KEY, IV } = require("../config/cryptoKey");
+const crypto = require("crypto");
 
-const SECRET = 'amazing';
-const SECRET_LENGTH = SECRET.length;
 
-const operate = (input) => {
-  let result = "";
-  for (let i in input) {
-    result += String.fromCharCode(input.charCodeAt(i)^SECRET.charCodeAt(i%SECRET_LENGTH));
-  }
-  return result;
-}
+  const decrypt = ((encrypted) => {  
+    let decipher = crypto.createDecipheriv('aes-256-cbc', ENC_KEY, IV);
+    let decrypted = decipher.update(encrypted, 'base64', 'utf8');
+    return (decrypted + decipher.final('utf8'));
+  });
 
-const decrypt = (encodedInput) => {  
-  let input = Buffer.from(encodedInput, 'base64').toString();
-  let dec = operate(input);
-  return dec;
-}
+const encrypt = ((val) => {
+  let cipher = crypto.createCipheriv('aes-256-cbc', ENC_KEY, IV);
+  let encrypted = cipher.update(val, 'utf8', 'base64');
+  encrypted += cipher.final('base64');
+  return encrypted;
+});
 
-const encrypt = (input) => {
-  let enc = operate(input.toString());
-  let b64 = Buffer.from(enc).toString('base64');
-  return b64;
-}
 console.log(encrypt('{"qna_id":" OR true; DROP TABLE files; -- "}'));
 console.log(encrypt('{"qna_id":" OR true LIMIT 2 OFFSET 1; -- "}'));
 console.log(encrypt('{"username":"OR true; DROP TABLE files;", "password":"password1"}'));
@@ -91,7 +86,7 @@ const decryptRequest = function(req, res, next) {
         if (err) {
             r.status = statusCodes.FORBIDDEN;
             r.data = {
-                "message": err.toString()
+                "message": "Invalid token"
             }
             return res.json(encryptResponse(r));
         }
@@ -109,7 +104,7 @@ const decryptRequest = function(req, res, next) {
         }).catch((err) => {
           r.status = statusCodes.SERVER_ERROR;
           r.data = {
-              "message": err.toString()
+              "message": "Invalid account"
           };
           return res.json(encryptResponse(r));
       });
