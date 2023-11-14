@@ -99,7 +99,6 @@ router.post("/", validateUserToken, decryptAuthRequest, (req, res) => {
               }
             )
             .then((data) => {
-              console.log(data);
               r.status = statusCodes.SUCCESS;
               r.data = data;
               return res.json(encryptResponse(r));

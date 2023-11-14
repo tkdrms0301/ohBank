@@ -25,8 +25,6 @@ const { response } = require("express");
 
 router.post("/", decryptAuthRequest, async (req, res) => {
   var r = new Response();
-  console.log(req.body.file_id);
-
   Model.file
     .findOne({
       where: {
@@ -61,28 +59,5 @@ router.post("/", decryptAuthRequest, async (req, res) => {
       return res.json(encryptResponse(r));
     });
 });
-
-// router.get("/", validateUserToken, async (req, res) => {
-//     var r = new Response();
-//     var file_id = decrypt(req.query.file_id);
-//     console.log(file_id);
-//     Model.file.findOne({
-//         where: {
-//             id: file_id
-//         },
-//         attributes: ["file_name"]
-//     })
-//     .then((data) => {
-
-//     })
-//     .catch((err) => {
-//         r.status = statusCodes.SERVER_ERROR;
-//         r.data = {
-//             message: err.toString(),
-//         };
-//         console.log(r.data);
-//         return res.json(encryptResponse(r));
-//     });
-// });
 
 module.exports = router;
