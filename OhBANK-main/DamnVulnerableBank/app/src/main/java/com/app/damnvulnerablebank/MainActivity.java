@@ -114,36 +114,19 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences pref = getApplicationContext().getSharedPreferences("apiurl", MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         EditText ed=findViewById(R.id.apiurl);
-        final String api =ed.getText().toString().trim();
+
+        final String api = EncryptDecrypt.encrypt(ed.getText().toString().trim());
         editor.putString("apiurl", api);
         editor.apply();
         final View vButton = findViewById(R.id.healthc);
         final Button bButton = (Button) findViewById(R.id.healthc);
         RequestQueue queue = Volley.newRequestQueue(this);
         SharedPreferences sharedPreferences = getSharedPreferences("apiurl", Context.MODE_PRIVATE);
-        final String url  = sharedPreferences.getString("apiurl",null);
+        final String url  = EncryptDecrypt.decrypt(sharedPreferences.getString("apiurl",null));
+
         String endpoint="/api/health/check";
         String finalurl = url+endpoint;
 
-        Log.d("ENC :", EncryptDecrypt.decrypt("79CGS1tDcO6bfypLg9GjwT569VNoUL1DQPHJOEP2kVGlJdDsxPxrCz5rqWBkmHsJ9zwK20AXbv6WYW0CGfQa59IYUD0pwqu2OFEFf9jjwyg="));
-//        try {
-//            // {"enc_data": "<b64>"}
-//
-//            JSONObject encData = new JSONObject();
-//            encData.put("enc_data", "GmdBWksdEwAZFAlLVEdDX1FKS0JtQU1DHggaBkNXQQFjTkdBTUMJBgMCFQUIFA5MXUFPDxUdBg4PCkNWY05HQU1DFAYaDwgDBlhTTkUSAgwfHQcJBk9rWkkTbRw=");
-////            String jsonObject = encData.get("enc_data").toString();
-////            String object = jsonObject.toString();
-////            Log.d("DECRYPTING: ", jsonObject);
-//            String decryptedString = EncryptDecrypt.decrypt(encData.get("enc_data").toString());
-//            JSONObject decryptedResponse = new JSONObject(decryptedString);
-////            String decryptedString = EncryptData.decrypt("GmdBWksdEwAZFAlLVEdDX1FKS0JtQU1DHggaBkNXQQFjTkdBTUMJBgMCFQUIFA5MXUFPDxUdBg4PCkNWY05HQU1DFAYaDwgDBlhTTkUSAgwfHQcJBk9rWkkTbRw=");
-////            JSONObject decryptedResponse = new JSONObject(decryptedString);
-//
-//            Log.d("DECRYPTING: ", decryptedResponse.toString());
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
         StringRequest stringRequest = new StringRequest(Request.Method.GET, finalurl,
                 new Response.Listener<String>() {
                     @Override

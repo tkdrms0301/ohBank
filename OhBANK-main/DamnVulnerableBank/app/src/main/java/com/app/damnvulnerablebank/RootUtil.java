@@ -3,9 +3,11 @@ package com.app.damnvulnerablebank;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.provider.Settings;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class RootUtil {
@@ -14,6 +16,7 @@ public class RootUtil {
         return checkRootMethod1() || checkRootMethod2() || checkRootMethod3();
     }
 
+    // build.prop (build tags)
     private static boolean checkRootMethod1() {
         String buildTags = android.os.Build.TAGS;
         return buildTags != null && buildTags.contains("test-keys");
@@ -29,6 +32,7 @@ public class RootUtil {
         }
     }*/
 
+    // 루팅 관련 파일 확인
     private static boolean checkRootMethod2() {
         String[] paths = { "/system/app/Superuser.apk", "/sbin/su", "/system/bin/su", "/system/xbin/su", "/data/local/xbin/su", "/data/local/bin/su", "/system/sd/xbin/su",
                 "/system/bin/failsafe/su", "/data/local/su", "/su/bin/su"};
@@ -38,6 +42,7 @@ public class RootUtil {
         return false;
     }
 
+    // 루팅 관련 명령어 실행
     private static boolean checkRootMethod3() {
         Process process = null;
         try {
@@ -49,6 +54,17 @@ public class RootUtil {
             return false;
         } finally {
             if (process != null) process.destroy();
+        }
+    }
+
+    // 특정 디렉터리에 SetUID 가 존재하는 파일 확인
+    public static boolean isSetUIDFileExists() {
+        try {
+            Process process = new ProcessBuilder("find", "/system", "-type", "f", "-perm", "-4000").start();
+            return process.waitFor() == 0;
+        } catch (InterruptedException | IOException e) {
+            Log.e("RootUtil", "isSetUIDFileExists | IOException", e);
+            return false;
         }
     }
 }
