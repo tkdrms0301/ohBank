@@ -25,11 +25,20 @@ const encrypt = (val) => {
  * @return                           - Calls the next function on success
  */
 const encryptResponse = (input) => {
+  if (typeof input === "object") {
+    input = JSON.stringify(input);
+  }
   let b64 = encrypt(input);
   return {
     enc_data: b64,
   };
 };
+
+console.log(
+  encryptResponse(
+    `{"status":{"code":200,"message":"Success"},"data":{"message":"Sucess"}}`
+  )
+);
 
 /**
  * Decryption middleware
