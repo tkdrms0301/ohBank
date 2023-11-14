@@ -50,7 +50,7 @@ public class QnAlist extends AppCompatActivity implements Qadapter.OnItemClickLi
 
     public void viewQnAlist(){
         SharedPreferences sharedPreferences = getSharedPreferences("apiurl", Context.MODE_PRIVATE);
-        final String url = sharedPreferences.getString("apiurl", null);
+        final String url = EncryptDecrypt.decrypt(sharedPreferences.getString("apiurl", null));
         String endpoint = "/api/qna/list";
         final String finalurl = url+endpoint;
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -117,7 +117,7 @@ public class QnAlist extends AppCompatActivity implements Qadapter.OnItemClickLi
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
-                final String retrivedToken  = sharedPreferences.getString("accesstoken",null);
+                final String retrivedToken  = EncryptDecrypt.decrypt(sharedPreferences.getString("accesstoken",null));
                 HashMap headers=new HashMap();
                 headers.put("Authorization","Bearer "+retrivedToken);
                 return headers;

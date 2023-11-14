@@ -73,10 +73,10 @@ public class QnAView extends AppCompatActivity implements FileAdapter.OnItemClic
         qnaID = intent.getStringExtra("qna_id");
 
         SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
-        retrivedToken = sharedPreferences.getString("accesstoken",null);
+        retrivedToken = EncryptDecrypt.decrypt(sharedPreferences.getString("accesstoken",null));
 
         sharedPreferences = getSharedPreferences("apiurl", Context.MODE_PRIVATE);
-        url = sharedPreferences.getString("apiurl",null);
+        url = EncryptDecrypt.decrypt(sharedPreferences.getString("apiurl",null));
         String endpoint="/api/qna/view";
         String finalurl = url+endpoint;
         requestQueue = Volley.newRequestQueue(getApplicationContext());

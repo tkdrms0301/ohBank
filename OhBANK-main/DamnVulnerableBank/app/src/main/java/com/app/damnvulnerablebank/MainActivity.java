@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         final Button bButton = (Button) findViewById(R.id.healthc);
         RequestQueue queue = Volley.newRequestQueue(this);
         SharedPreferences sharedPreferences = getSharedPreferences("apiurl", Context.MODE_PRIVATE);
-        final String url  = EncryptDecrypt.decrypt(sharedPreferences.getString("apiurl",null));
+        final String url = EncryptDecrypt.decrypt(sharedPreferences.getString("apiurl",null));
 
         String endpoint="/api/health/check";
         String finalurl = url+endpoint;

@@ -30,10 +30,10 @@ public class ViewBalance extends AppCompatActivity {
         setContentView(R.layout.activity_balanceview);
         final TextView tv=findViewById(R.id.textView);
         SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
-        final String retrivedToken  = sharedPreferences.getString("accesstoken",null);
+        final String retrivedToken  = EncryptDecrypt.decrypt(sharedPreferences.getString("accesstoken",null));
         final RequestQueue queue = Volley.newRequestQueue(this);
         sharedPreferences = getSharedPreferences("apiurl", Context.MODE_PRIVATE);
-        final String url  = sharedPreferences.getString("apiurl",null);
+        final String url  = EncryptDecrypt.decrypt(sharedPreferences.getString("apiurl",null));
         String endpoint="/api/balance/view";
         String finalurl = url+endpoint;
 
