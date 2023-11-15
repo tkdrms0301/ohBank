@@ -38,6 +38,10 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".PasswordInputActivity"
+            android:launchMode="standard">
+        </activity>
         <activity android:name=".ResetPassword" />
         <activity android:name=".ViewBeneficiary" />
         <activity android:name=".ApproveBeneficiary" />
@@ -45,6 +49,7 @@
         <activity android:name=".AddBeneficiary" />
         <activity
             android:name=".SendMoney"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
