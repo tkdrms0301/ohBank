@@ -82,10 +82,9 @@ public class BankLogin extends AppCompatActivity {
                             }
 
                             JSONObject obj = decryptedResponse.getJSONObject("data");
-                            String accessToken=obj.getString("accessToken");
+                            String accessToken= obj.getString("accessToken");
                             SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
-                            Log.d("accesstoken",accessToken);
-                            sharedPreferences.edit().putString("accesstoken",accessToken).apply();
+                            sharedPreferences.edit().putString("accesstoken",EncryptDecrypt.encrypt(accessToken)).apply();
                             sharedPreferences.edit().putBoolean("isloggedin",true).apply();
                             startActivity(new Intent(BankLogin.this, Dashboard.class));
 
