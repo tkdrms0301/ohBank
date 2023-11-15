@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_banklogin);
 
        boolean isDebuggable = (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
-       FridaCheckJNI fridaCheck = new FridaCheckJNI();
+       FridaUtil fridaCheck = new FridaUtil();
 
 
        if(android.os.Debug.isDebuggerConnected()){
@@ -73,16 +73,38 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Check frida
-        if(fridaCheck.fridaCheck() == 1) {
+        //if(fridaCheck.fridaCheck() == 1) {
+        FridaUtil.detectFrida(27000, 27501);
+        if(FridaUtil.fridaDetected || FridaUtil.checkFridaFiles() || FridaUtil.checkFridaProcesses()) {
             Toast.makeText(getApplicationContext(), "Frida is running", Toast.LENGTH_SHORT).show();
             Log.d("FRIDA CHECK", "FRIDA Server DETECTED");
-
             finish();
         } else {
             Log.d("FRIDA CHECK", "FRIDA Server NOT RUNNING");
             Toast.makeText(getApplicationContext(), "Frida is NOT running", Toast.LENGTH_SHORT).show();
         }
 
+        SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
+        boolean isloggedin=sharedPreferences.getBoolean("isloggedin", false);
+        if(isloggedin)
+        {
+            startActivity(new Intent(getApplicationContext(), Dashboard.class));
+            finish();
+        }
+
+    }
+
+    public void loginPage(View view){
+        Intent intent =new Intent(getApplicationContext(), BankLogin.class);
+        startActivity(intent);
+    }
+
+    public void signupPage(View view){
+        Intent intent =new Intent(getApplicationContext(), RegisterBank.class);
+        startActivity(intent);
+    }
+
+    public void healthCheck(View v){
         SharedPreferences secretPref = getSharedPreferences("secret", MODE_PRIVATE);
         SharedPreferences.Editor secretEditor = secretPref.edit();
 //        keystore encryption
@@ -108,27 +130,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("ENCRYPTED", EncryptDecrypt.getInstance().getKey());
         Log.d("ENCRYPTED", EncryptDecrypt.getInstance().getIv());
 
-        SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
-        boolean isloggedin=sharedPreferences.getBoolean("isloggedin", false);
-        if(isloggedin)
-        {
-            startActivity(new Intent(getApplicationContext(), Dashboard.class));
-            finish();
-        }
-
-    }
-
-    public void loginPage(View view){
-        Intent intent =new Intent(getApplicationContext(), BankLogin.class);
-        startActivity(intent);
-    }
-
-    public void signupPage(View view){
-        Intent intent =new Intent(getApplicationContext(), RegisterBank.class);
-        startActivity(intent);
-    }
-
-    public void healthCheck(View v){
         SharedPreferences pref = getApplicationContext().getSharedPreferences("apiurl", MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         EditText ed=findViewById(R.id.apiurl);
