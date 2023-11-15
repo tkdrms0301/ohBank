@@ -50,7 +50,7 @@ public class PendingBeneficiary extends AppCompatActivity implements Padapter.On
 
     public void getPendingBeneficiaries(){
         SharedPreferences sharedPreferences = getSharedPreferences("apiurl", Context.MODE_PRIVATE);
-        final String url  = sharedPreferences.getString("apiurl",null);
+        final String url  = EncryptDecrypt.decrypt(sharedPreferences.getString("apiurl",null));
         String endpoint = "/api/beneficiary/pending";
         String finalUrl = url + endpoint;
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -113,7 +113,7 @@ public class PendingBeneficiary extends AppCompatActivity implements Padapter.On
             @Override
             public Map getHeaders() throws AuthFailureError {
                 SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
-                final String retrivedToken = sharedPreferences.getString("accesstoken",null);
+                final String retrivedToken = EncryptDecrypt.decrypt(sharedPreferences.getString("accesstoken",null));
                 HashMap headers = new HashMap();
                 headers.put("Authorization","Bearer " + retrivedToken);
                 return headers;

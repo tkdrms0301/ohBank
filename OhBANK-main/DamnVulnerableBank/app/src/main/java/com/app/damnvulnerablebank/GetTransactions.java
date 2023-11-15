@@ -52,7 +52,7 @@ public class GetTransactions extends AppCompatActivity {
 
     private void extractRecords() {
         SharedPreferences sharedPreferences = getSharedPreferences("apiurl", Context.MODE_PRIVATE);
-        final String url  = sharedPreferences.getString("apiurl",null);
+        final String url  = EncryptDecrypt.decrypt(sharedPreferences.getString("apiurl",null));
         String endpoint="/api/transactions/view";
         final String finalurl = url + endpoint;
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -111,7 +111,7 @@ public class GetTransactions extends AppCompatActivity {
                 @Override
                 public Map getHeaders() throws AuthFailureError {
                 SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
-                final String retrivedToken  = sharedPreferences.getString("accesstoken",null);
+                final String retrivedToken  = EncryptDecrypt.decrypt(sharedPreferences.getString("accesstoken",null));
                 HashMap headers=new HashMap();
                 headers.put("Authorization","Bearer "+retrivedToken);
                 return headers;

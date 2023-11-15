@@ -40,7 +40,7 @@ public class ApproveBeneficiary extends AppCompatActivity {
 
  public void approveBeneficiary(View view){
      SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
-     final String retrivedToken  = sharedPreferences.getString("accesstoken",null);
+     final String retrivedToken  = EncryptDecrypt.decrypt(sharedPreferences.getString("accesstoken",null));
      EditText ed=findViewById(R.id.accountid1);
      int n = Integer.parseInt(ed.getText().toString());
 
@@ -59,7 +59,7 @@ public class ApproveBeneficiary extends AppCompatActivity {
      }
      // Enter the correct url for your api service site
      sharedPreferences = getSharedPreferences("apiurl", Context.MODE_PRIVATE);
-     final String url  = sharedPreferences.getString("apiurl",null);
+     final String url  = EncryptDecrypt.decrypt(sharedPreferences.getString("apiurl",null));
      String endpoint="/api/beneficiary/approve";
      String finalurl = url+endpoint;
      final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, finalurl, requestDataEncrypted,

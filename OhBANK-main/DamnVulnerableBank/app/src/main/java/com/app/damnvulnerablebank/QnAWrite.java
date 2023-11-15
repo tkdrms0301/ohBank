@@ -112,10 +112,10 @@ public class QnAWrite extends AppCompatActivity implements FileAdapter.OnItemCli
 
 
         SharedPreferences sharedPreferences = getSharedPreferences("jwt", MODE_PRIVATE);
-        retrivedToken = sharedPreferences.getString("accesstoken", null);
+        retrivedToken = EncryptDecrypt.decrypt(sharedPreferences.getString("accesstoken", null));
         
         sharedPreferences = getSharedPreferences("apiurl", MODE_PRIVATE);
-        url = sharedPreferences.getString("apiurl", null);
+        url = EncryptDecrypt.decrypt(sharedPreferences.getString("apiurl", null));
 //        url = "https://c0907315-9d56-485c-9837-59867dbd35f9.mock.pstmn.io";
 
         requestQueue = Volley.newRequestQueue(this);

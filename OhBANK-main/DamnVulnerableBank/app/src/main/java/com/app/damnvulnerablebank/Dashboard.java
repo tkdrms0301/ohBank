@@ -12,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Dashboard extends AppCompatActivity {
-
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)
@@ -27,7 +26,6 @@ public class Dashboard extends AppCompatActivity {
                     }
                 }).create().show();
     }
-
 
     public void logout(View view){
         SharedPreferences pref = getApplicationContext().getSharedPreferences("jwt", MODE_PRIVATE);

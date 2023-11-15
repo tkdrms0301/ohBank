@@ -46,9 +46,8 @@ public class BankLogin extends AppCompatActivity {
         final String email = inputEmail.getText().toString().trim();
         final String password = inputPassword.getText().toString().trim();
 
-
         SharedPreferences sharedPreferences = getSharedPreferences("apiurl", Context.MODE_PRIVATE);
-        final String url = sharedPreferences.getString("apiurl",null);
+        final String url = EncryptDecrypt.decrypt(sharedPreferences.getString("apiurl",null));
         String endpoint = "/api/user/login";
         String finalurl = url + endpoint;
 
@@ -83,10 +82,9 @@ public class BankLogin extends AppCompatActivity {
                             }
 
                             JSONObject obj = decryptedResponse.getJSONObject("data");
-                            String accessToken=obj.getString("accessToken");
+                            String accessToken= obj.getString("accessToken");
                             SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
-                            Log.d("accesstoken",accessToken);
-                            sharedPreferences.edit().putString("accesstoken",accessToken).apply();
+                            sharedPreferences.edit().putString("accesstoken",EncryptDecrypt.encrypt(accessToken)).apply();
                             sharedPreferences.edit().putBoolean("isloggedin",true).apply();
                             startActivity(new Intent(BankLogin.this, Dashboard.class));
 

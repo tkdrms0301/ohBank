@@ -1,8 +1,7 @@
 package com.app.damnvulnerablebank;
 
-import static android.content.Intent.ACTION_VIEW;
-
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
@@ -37,8 +36,7 @@ import java.util.concurrent.Executor;
 
 import static com.app.damnvulnerablebank.ViewBeneficiaryAdmin.beneficiary_account_number;
 
-public class SendMoney extends AppCompatActivity {
-
+public class SendMoney extends AppCompatActivity{
     Button send;
     TextView tt;
 
@@ -60,23 +58,35 @@ public class SendMoney extends AppCompatActivity {
             if(extras != null) {
                 String account = getIntent().getData().getQueryParameter("account");
                 String money = getIntent().getData().getQueryParameter("money");
+
                 ((EditText)findViewById(R.id.edact)).setText(account);
                 ((EditText)findViewById(R.id.edamt)).setText(money);
-                sendMoney();
-                finish();
-            }
-        } else {
-        }
 
+                sendMoneyWithPasswordCheck();
+            }
+        }
     }
 
+    public void sendMoneyWithPasswordCheck() {
+        Intent intent = new Intent(SendMoney.this, PasswordInputActivity.class);
+        startActivityForResult(intent, 1);
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Log.d("onActivityResult", "onActivityResult after");
+        super.onActivityResult(requestCode, resultCode, data);
 
-    public void sendMoney(){
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            sendMoney();
+        }
+    }
+
+        public void sendMoney(){
         SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
-        final String retrivedToken  = sharedPreferences.getString("accesstoken",null);
+        final String retrivedToken  = EncryptDecrypt.decrypt(sharedPreferences.getString("accesstoken",null));
         SharedPreferences sharedPreferences1 = getSharedPreferences("apiurl", Context.MODE_PRIVATE);
-        final String url  = sharedPreferences1.getString("apiurl",null);
+        final String url  = EncryptDecrypt.decrypt(sharedPreferences1.getString("apiurl",null));
         String endpoint = "/api/balance/transfer";
         final String finalUrl = url+endpoint;
         EditText ed = findViewById(R.id.edact);
@@ -111,26 +121,19 @@ public class SendMoney extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
                         try {
-
                         JSONObject decryptedResponse =  new JSONObject(EncryptDecrypt.decrypt(response.get("enc_data").toString()));
                         Log.d("Send Money", decryptedResponse.toString());
 
                         if(decryptedResponse.getJSONObject("status").getInt("code") != 200) {
                             Toast.makeText(getApplicationContext(), "Error: " + decryptedResponse.getJSONObject("data").getString("message"), Toast.LENGTH_SHORT).show();
-
                             return;
-                            // This is buggy. Need to call Login activity again if incorrect credentials are given
                         }
-
-
 
                             Toast.makeText(getApplicationContext(),""+EncryptDecrypt.decrypt(response.get("enc_data").toString()), Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
 
                         startActivity(new Intent(SendMoney.this, Dashboard.class));
 
