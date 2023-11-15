@@ -1,4 +1,19 @@
+const crypto = require("crypto");
+
+const seed = "dkstkdrmstjdtpruddldbwjd";
+
+function generateKeyFromSeed(seed) {
+  return crypto.createHash("sha256").update(seed).digest();
+}
+
+function generateIVFromSeed(seed) {
+  const seedBuffer = Buffer.from(seed);
+  const iv = Buffer.alloc(16);
+  seedBuffer.copy(iv, 0, 0, Math.min(seedBuffer.length, iv.length));
+  return iv;
+}
+
 module.exports = {
-  ENC_KEY: "bf3c199c2470cb477d907b1e0917c17b",
-  IV: "5183666c72eec9e4",
+  ENC_KEY: generateKeyFromSeed(seed),
+  IV: generateIVFromSeed(seed),
 };
