@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
          여기서 시드키 가지고 초기벡터 생성
          * **/
 
+        EncryptDecrypt.init();
         Log.d("key", EncryptDecrypt.encryptByANDROID_KEY_STORE("bf3c199c2470cb477d907b1e0917c17b"));  //하드코딩 값 대신 시드키로 생성한 키
         Log.d("iv", EncryptDecrypt.encryptByANDROID_KEY_STORE("5183666c72eec9e4")); //하드코딩 값 대신 시드키로 생성한 초기벡터
 
