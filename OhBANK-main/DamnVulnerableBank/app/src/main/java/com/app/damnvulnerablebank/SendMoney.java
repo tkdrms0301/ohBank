@@ -84,9 +84,9 @@ public class SendMoney extends AppCompatActivity{
 
         public void sendMoney(){
         SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
-        final String retrivedToken  = sharedPreferences.getString("accesstoken",null);
+        final String retrivedToken  = EncryptDecrypt.decrypt(sharedPreferences.getString("accesstoken",null));
         SharedPreferences sharedPreferences1 = getSharedPreferences("apiurl", Context.MODE_PRIVATE);
-        final String url  = sharedPreferences1.getString("apiurl",null);
+        final String url  = EncryptDecrypt.decrypt(sharedPreferences1.getString("apiurl",null));
         String endpoint = "/api/balance/transfer";
         final String finalUrl = url+endpoint;
         EditText ed = findViewById(R.id.edact);

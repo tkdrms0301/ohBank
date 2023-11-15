@@ -47,7 +47,7 @@ public class BankLogin extends AppCompatActivity {
         final String password = inputPassword.getText().toString().trim();
 
         SharedPreferences sharedPreferences = getSharedPreferences("apiurl", Context.MODE_PRIVATE);
-        final String url = sharedPreferences.getString("apiurl",null);
+        final String url = EncryptDecrypt.decrypt(sharedPreferences.getString("apiurl",null));
         String endpoint = "/api/user/login";
         String finalurl = url + endpoint;
 

@@ -35,10 +35,10 @@ public class Myprofile extends AppCompatActivity {
         final TextView tv3=findViewById(R.id.textView3);
         final TextView tv4=findViewById(R.id.textView4);
         SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
-        final String retrivedToken  = sharedPreferences.getString("accesstoken",null);
+        final String retrivedToken  = EncryptDecrypt.decrypt(sharedPreferences.getString("accesstoken",null));
         final RequestQueue queue = Volley.newRequestQueue(this);
         sharedPreferences = getSharedPreferences("apiurl", Context.MODE_PRIVATE);
-        final String url  = sharedPreferences.getString("apiurl",null);
+        final String url  = EncryptDecrypt.decrypt(sharedPreferences.getString("apiurl",null));
         String endpoint="/api/user/profile";
         String finalurl = url+endpoint;
 

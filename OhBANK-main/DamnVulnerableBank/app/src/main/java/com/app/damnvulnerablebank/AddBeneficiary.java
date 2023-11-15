@@ -36,11 +36,11 @@ public class AddBeneficiary extends AppCompatActivity {
 
     public void addBeneficiary(View view){
         SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
-        final String retrivedToken  = sharedPreferences.getString("accesstoken",null);
+        final String retrivedToken  = EncryptDecrypt.decrypt(sharedPreferences.getString("accesstoken",null));
         EditText ed=findViewById(R.id.edt);
         final String edd=ed.getText().toString().trim();
         sharedPreferences = getSharedPreferences("apiurl", Context.MODE_PRIVATE);
-        final String url  = sharedPreferences.getString("apiurl",null);
+        final String url  = EncryptDecrypt.decrypt(sharedPreferences.getString("apiurl",null));
         String endpoint="/api/beneficiary/add";
         String finalurl = url+endpoint;
         final RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
