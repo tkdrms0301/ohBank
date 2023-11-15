@@ -83,6 +83,30 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Frida is NOT running", Toast.LENGTH_SHORT).show();
         }
 
+        SharedPreferences secretPref = getSharedPreferences("secret", MODE_PRIVATE);
+        SharedPreferences.Editor secretEditor = secretPref.edit();
+//        keystore encryption
+//        key : bf3c199c2470cb477d907b1e0917c17b
+//        iv : 5183666c72eec9e4
+
+        /**
+         여기서 시드키 가지고 키 생성.
+         여기서 시드키 가지고 초기벡터 생성
+         * **/
+
+        Log.d("key", EncryptDecrypt.encryptByANDROID_KEY_STORE("bf3c199c2470cb477d907b1e0917c17b"));  //하드코딩 값 대신 시드키로 생성한 키
+        Log.d("iv", EncryptDecrypt.encryptByANDROID_KEY_STORE("5183666c72eec9e4")); //하드코딩 값 대신 시드키로 생성한 초기벡터
+
+        secretEditor.putString("key", EncryptDecrypt.encryptByANDROID_KEY_STORE("bf3c199c2470cb477d907b1e0917c17b"));
+        secretEditor.putString("iv", EncryptDecrypt.encryptByANDROID_KEY_STORE("5183666c72eec9e4"));
+
+        secretEditor.apply();
+        EncryptDecrypt.getInstance().setKey(secretPref.getString("key", null));
+        EncryptDecrypt.getInstance().setIv(secretPref.getString("iv", null));
+
+        Log.d("ENCRYPTED", EncryptDecrypt.getInstance().getKey());
+        Log.d("ENCRYPTED", EncryptDecrypt.getInstance().getIv());
+
         SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
         boolean isloggedin=sharedPreferences.getBoolean("isloggedin", false);
         if(isloggedin)
@@ -104,20 +128,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void healthCheck(View v){
-        SharedPreferences secretPref = getSharedPreferences("secret", MODE_PRIVATE);
-        SharedPreferences.Editor secretEditor = secretPref.edit();
-//        keystore encryption
-//        key : bf3c199c2470cb477d907b1e0917c17b
-//        iv : 5183666c72eec9e4
-        secretEditor.putString("key", "JO1QhyBz6ywDQ8sm5vWJCk3z55vFmQ9DWQaXRI1P2s56jsKpILo1CM7y5/74+TwQ/m12sIUjbpfOQAhjHjcWoYxitR7Djq5jyHgFJS6VuGiT2elhqmQnQOhLEmPAr1R4Y+nJHyjCjdLDAwqKFtA7WJiXBJCOirrKra69fO+4R4C9MeQW6P2IQ5wBDRfwcl8VkKnlZyQzbSUcKQSUAUPYZUD92f+5YbTRgGsiSH8rnx7p1PJXkeMeWUqsA9GQC8K5UrWh1tMlsblH2oG+xqvWrDaZUb4E1xrNJf8sGOJM+jsGlFXOxgZLDSa2dvqwUDdmZDhNd1T7hGo4Ttk4U/gbXg==");
-        secretEditor.putString("iv", "BZZz4cueSgUnd3cpLgbxmQ+3BEzQiaE9SkklQBw1ZNesWaKNLYxInuC4drzSsG3QktZdyva5PnzwwYItG//E7xUwMVPsoYEDBW1O9/ytd5lOgFp6KoXzieCq9tlgIatck0cBZAZ8Mc+qBmtDRVoCpQ4YVAeqDVCHPcwhYoLRqSyy2//tZ/iCeOQFmCCM5/Ka6ni/dcJ6WUs6y/Gq5avPwaeInhno3ne6JhygO2C5lTwweEVe/oKt5KM/IOLsbvfDIxeevZHuSs9q+VIgM+kKQr9XdCJr9CBXaFweYobg6U+Z+vQTtQcgGiH3TF7i8PKCuBKzwnixn+KpxleJmTd6aQ==");
-        secretEditor.apply();
-        EncryptDecrypt.getInstance().setKey(secretPref.getString("key", null));
-        EncryptDecrypt.getInstance().setIv(secretPref.getString("iv", null));
-
-        Log.d("ENCRYPTED", EncryptDecrypt.getInstance().getKey());
-        Log.d("ENCRYPTED", EncryptDecrypt.getInstance().getIv());
-
         SharedPreferences pref = getApplicationContext().getSharedPreferences("apiurl", MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         EditText ed=findViewById(R.id.apiurl);
