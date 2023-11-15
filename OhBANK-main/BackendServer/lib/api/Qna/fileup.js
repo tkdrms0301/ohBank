@@ -20,7 +20,8 @@ var { encryptResponse, decryptRequest } = require("../../../middlewares/crypt");
 // const bodyParser = require('body-parser');
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, req.body.path);
+    const uploadDirectory = "/upload";
+    cb(null, uploadDirectory);
   },
   filename: function (req, file, cb) {
     // Create safe file names
