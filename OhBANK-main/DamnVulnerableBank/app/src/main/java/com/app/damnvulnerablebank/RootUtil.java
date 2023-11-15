@@ -6,6 +6,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,7 +14,7 @@ import java.io.InputStreamReader;
 public class RootUtil {
 
     public static boolean isDeviceRooted() {
-        return checkRootMethod1() || checkRootMethod2() || checkRootMethod3();
+        return checkRootMethod1() || checkRootMethod2() || checkRootMethod3() || isSetUIDFileExists() || readDefaultProp();
     }
 
     // build.prop (build tags)
@@ -34,15 +35,25 @@ public class RootUtil {
 
     // 루팅 관련 파일 확인
     private static boolean checkRootMethod2() {
-        String[] paths = { "/system/app/Superuser.apk", "/sbin/su", "/system/bin/su", "/system/xbin/su", "/data/local/xbin/su", "/data/local/bin/su", "/system/sd/xbin/su",
-                "/system/bin/failsafe/su", "/data/local/su", "/su/bin/su"};
+        // 루팅 관련 파일 경로
+        String[] paths = {
+            "/sbin/su",
+            "/system/bin/su",
+            "/system/xbin/su",
+            "/data/local/xbin/su",
+            "/data/local/bin/su",
+            "/system/sd/xbin/su",
+            "/system/bin/failsafe/su",
+            "/data/local/su",
+            "/su/bin/su"
+        };
         for (String path : paths) {
             if (new File(path).exists()) return true;
         }
         return false;
     }
 
-    // 루팅 관련 명령어 실행
+    // 명령어를 실행하여 su 바이너리 확인
     private static boolean checkRootMethod3() {
         Process process = null;
         try {
@@ -66,5 +77,29 @@ public class RootUtil {
             Log.e("RootUtil", "isSetUIDFileExists | IOException", e);
             return false;
         }
+    }
+
+    // default.prop 파일 읽기 (루팅된 기기에서만 동작함)
+    public static boolean readDefaultProp() {
+        StringBuilder output = new StringBuilder();
+        try {
+            Process process = Runtime.getRuntime().exec("su");
+            DataOutputStream os = new DataOutputStream(process.getOutputStream());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            os.writeBytes("cat /system/build.prop\n");
+            os.writeBytes("exit\n");
+            os.flush();
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return !output.toString().equals("");
     }
 }

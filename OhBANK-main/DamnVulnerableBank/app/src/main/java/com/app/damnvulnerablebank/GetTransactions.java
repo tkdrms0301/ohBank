@@ -111,7 +111,7 @@ public class GetTransactions extends AppCompatActivity {
                 @Override
                 public Map getHeaders() throws AuthFailureError {
                 SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
-                final String retrivedToken  = EncryptDecrypt.dechrypt(sharedPreferences.getString("accesstoken",null));
+                final String retrivedToken  = EncryptDecrypt.decrypt(sharedPreferences.getString("accesstoken",null));
                 HashMap headers=new HashMap();
                 headers.put("Authorization","Bearer "+retrivedToken);
                 return headers;
