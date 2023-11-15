@@ -19,7 +19,6 @@ var {
 router.post("/", decryptAuthRequest, (req, res) => {
   var r = new Response();
   let qna_id = req.body.qna_id;
-  console.log(qna_id);
 
   Model.qna
     .findOne({

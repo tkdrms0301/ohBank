@@ -69,7 +69,6 @@ router.post("/", [validateAdminToken, decryptRequest], (req, res) => {
       }
     })
     .catch((err) => {
-      console.log();
       r.status = statusCodes.SERVER_ERROR;
       r.data = {
         message: err.toString(),

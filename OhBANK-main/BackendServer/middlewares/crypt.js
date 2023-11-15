@@ -34,12 +34,6 @@ const encryptResponse = (input) => {
   };
 };
 
-console.log(
-  encryptResponse(
-    `{"status":{"code":200,"message":"Success"},"data":{"message":"Sucess"}}`
-  )
-);
-
 /**
  * Decryption middleware
  * This middleware decrypts user data after authorization check

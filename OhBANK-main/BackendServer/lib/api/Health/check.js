@@ -20,13 +20,6 @@ router.get("/", function (req, res) {
       r.data = {
         message: "Sucess",
       };
-      // console.log("***********" + r);
-      // console.log("***********" + encryptResponse(r));
-      // console.log(
-      //   decrypt(
-      //     "79CGS1tDcO6bfypLg9GjwT569VNoUL1DQPHJOEP2kVGlJdDsxPxrCz5rqWBkmHsJ9zwK20AXbv6WYW0CGfQa59IYUD0pwqu2OFEFf9jjwyg="
-      //   )
-      // );
       return res.json(encryptResponse(r));
     })
     .catch((err) => {
