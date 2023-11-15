@@ -13,9 +13,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class RootUtil {
-
     public static boolean isDeviceRooted() {
         return isAppInstalled() || isBinaryExists() || isCommandExists() || buildPropCheck() || isSetUIDFileExists() || readDefaultProp() || rootingFileCheck();
+                //isAppInstalled() || isBinaryExists() || isCommandExists() || buildPropCheck() || isSetUIDFileExists() || readDefaultProp() || rootingFileCheck();
     }
 
     // 루팅 관련 앱(패키지)을 탐지
@@ -25,8 +25,6 @@ public class RootUtil {
                 "com.thirdparty.superuser",
                 "eu.chainfire.supersu",
                 "com.koushikdutta.superuser",
-                "com.kinguser",
-                "com.devadvance.rootcloak2"
         };
 
         try {
