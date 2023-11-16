@@ -37,30 +37,38 @@ const upload = multer({
   limits: {
     fileSize: 1024 * 1024 * 5, // Limit file size to 5MB
   },
+  fileFilter: function (req, file, cb) {
+    const allowedExtensions = ["jpg", "jpeg", "png", "pdf"]; // List of allowed file extension
+
+    const fileNameParts = file.originalname.split(".");
+    const fileExtension = fileNameParts[fileNameParts.length - 1].toLowerCase();
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      req.fileValidationError = "Invalid file extension";
+      return cb(null, false);
+    }
+    req.isValidExtention = true;
+    cb(null, true);
+  },
 });
 
 router.post("/", upload.single("file"), validateUserToken, (req, res) => {
   var r = new Response();
   let user_id = req.user_id;
-  var filename = req.file.originalname;
-  var savedname = req.file.destination + "/" + filename;
 
-  const allowedExtensions = ["jpg", "jpeg", "png", "pdf"]; // List of allowed file extension
-
-  const fileNameParts = req.file.originalname.split(".");
-  const fileExtension = fileNameParts[fileNameParts.length - 1].toLowerCase();
-
-  if (!allowedExtensions.includes(fileExtension)) {
+  if (req.fileValidationError) {
     r.status = statusCodes.BAD_INPUT;
     r.data = {
-      message: "invalid file extension",
+      message: req.fileValidationError,
     };
     return res.json(encryptResponse(r));
   }
 
+  var savedname = req.file.destination + "/" + req.file.filename;
+
   Model.file
     .create({
-      file_name: filename,
+      file_name: req.file.filename,
       saved_name: savedname,
       user_id: user_id,
     })
