@@ -27,6 +27,9 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_banklogin);
 
        boolean isDebuggable = (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
-       FridaCheckJNI fridaCheck = new FridaCheckJNI();
+       FridaUtil fridaCheck = new FridaUtil();
 
 
        if(android.os.Debug.isDebuggerConnected()){
@@ -73,40 +76,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Check frida
-        if(fridaCheck.fridaCheck() == 1) {
+        //if(fridaCheck.fridaCheck() == 1) {
+        FridaUtil.detectFrida(27000, 27501);
+        if(FridaUtil.fridaDetected || FridaUtil.checkFridaFiles() || FridaUtil.checkFridaProcesses()) {
             Toast.makeText(getApplicationContext(), "Frida is running", Toast.LENGTH_SHORT).show();
             Log.d("FRIDA CHECK", "FRIDA Server DETECTED");
-
             finish();
         } else {
             Log.d("FRIDA CHECK", "FRIDA Server NOT RUNNING");
             Toast.makeText(getApplicationContext(), "Frida is NOT running", Toast.LENGTH_SHORT).show();
         }
-
-        SharedPreferences secretPref = getSharedPreferences("secret", MODE_PRIVATE);
-        SharedPreferences.Editor secretEditor = secretPref.edit();
-//        keystore encryption
-//        key : bf3c199c2470cb477d907b1e0917c17b
-//        iv : 5183666c72eec9e4
-
-        /**
-         여기서 시드키 가지고 키 생성.
-         여기서 시드키 가지고 초기벡터 생성
-         * **/
-
-        EncryptDecrypt.init();
-        Log.d("key", EncryptDecrypt.encryptByANDROID_KEY_STORE("bf3c199c2470cb477d907b1e0917c17b"));  //하드코딩 값 대신 시드키로 생성한 키
-        Log.d("iv", EncryptDecrypt.encryptByANDROID_KEY_STORE("5183666c72eec9e4")); //하드코딩 값 대신 시드키로 생성한 초기벡터
-
-        secretEditor.putString("key", EncryptDecrypt.encryptByANDROID_KEY_STORE("bf3c199c2470cb477d907b1e0917c17b"));
-        secretEditor.putString("iv", EncryptDecrypt.encryptByANDROID_KEY_STORE("5183666c72eec9e4"));
-
-        secretEditor.apply();
-        EncryptDecrypt.getInstance().setKey(secretPref.getString("key", null));
-        EncryptDecrypt.getInstance().setIv(secretPref.getString("iv", null));
-
-        Log.d("ENCRYPTED", EncryptDecrypt.getInstance().getKey());
-        Log.d("ENCRYPTED", EncryptDecrypt.getInstance().getIv());
 
         SharedPreferences sharedPreferences = getSharedPreferences("jwt", Context.MODE_PRIVATE);
         boolean isloggedin=sharedPreferences.getBoolean("isloggedin", false);
@@ -129,6 +108,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void healthCheck(View v){
+        SharedPreferences secretPref = getSharedPreferences("secret", MODE_PRIVATE);
+        SharedPreferences.Editor secretEditor = secretPref.edit();
+
+        byte[] key = null;
+        try {
+            key = EncryptDecrypt.generateKeyFromSeed(EncryptDecrypt.SEED_KEY);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        byte[] iv = EncryptDecrypt.generateIVFromSeed(EncryptDecrypt.SEED_KEY);
+
+        EncryptDecrypt.init();
+
+        secretEditor.putString("key", EncryptDecrypt.encryptByANDROID_KEY_STORE(key));
+        secretEditor.putString("iv", EncryptDecrypt.encryptByANDROID_KEY_STORE(iv));
+
+        secretEditor.apply();
+        EncryptDecrypt.getInstance().setKey(secretPref.getString("key", null).getBytes(StandardCharsets.UTF_8));
+        EncryptDecrypt.getInstance().setIv(secretPref.getString("iv", null).getBytes(StandardCharsets.UTF_8));
+
+
         SharedPreferences pref = getApplicationContext().getSharedPreferences("apiurl", MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         EditText ed=findViewById(R.id.apiurl);
