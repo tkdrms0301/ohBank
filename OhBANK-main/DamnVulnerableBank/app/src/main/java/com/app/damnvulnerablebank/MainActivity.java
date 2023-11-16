@@ -70,10 +70,10 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"Debbuger is Running", Toast.LENGTH_SHORT).show();
         }
 
-        if(RootUtil.isDeviceRooted()) {
-            Toast.makeText(getApplicationContext(), "Phone is Rooted", Toast.LENGTH_SHORT).show();
-            finish();
-        }
+//        if(RootUtil.isDeviceRooted()) {
+//            Toast.makeText(getApplicationContext(), "Phone is Rooted", Toast.LENGTH_SHORT).show();
+//            finish();
+//        }
 
         // Check frida
         //if(fridaCheck.fridaCheck() == 1) {
