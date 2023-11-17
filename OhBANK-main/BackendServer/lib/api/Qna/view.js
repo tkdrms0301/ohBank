@@ -21,7 +21,7 @@ router.post("/", validateUserToken, decryptRequest, (req, res) => {
 
   // SQL injection prevention
   if (!/^\d+$/.test(qna_id)) {
-    r.status = statusCodes.BAD_REQUEST;
+    r.status = statusCodes.BAD_INPUT;
     r.data = {
       message: "invalid input",
     };
@@ -37,6 +37,14 @@ router.post("/", validateUserToken, decryptRequest, (req, res) => {
       attributes: ["title", "content", "write_at"],
     })
     .then((data) => {
+      if (data == null) {
+        r.status = statusCodes.BAD_INPUT;
+        r.data = {
+          message: "invalid input",
+        };
+        return res.json(encryptResponse(r));
+      }
+
       r.status = statusCodes.SUCCESS;
       r.data = data;
 
@@ -52,7 +60,7 @@ router.post("/", validateUserToken, decryptRequest, (req, res) => {
           return res.json(encryptResponse(r));
         })
         .catch((err) => {
-          r.status = statusCodes.SERVER_ERROR;
+          r.status = statusCodes.BAD_INPUT;
           r.data = {
             message: "invalid input",
           };
@@ -60,7 +68,7 @@ router.post("/", validateUserToken, decryptRequest, (req, res) => {
         });
     })
     .catch((err) => {
-      r.status = statusCodes.SERVER_ERROR;
+      r.status = statusCodes.BAD_INPUT;
       r.data = {
         message: "invalid input",
       };

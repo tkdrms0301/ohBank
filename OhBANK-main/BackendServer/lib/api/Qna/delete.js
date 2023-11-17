@@ -80,9 +80,9 @@ router.post("/", decryptAuthRequest, (req, res) => {
             return res.json(encryptResponse(r));
           });
       } else {
-        r.status = statusCodes.BAD_REQUEST;
+        r.status = statusCodes.FORBIDDEN;
         r.data = {
-          message: "invalid input",
+          message: "invalid permission",
         };
         return res.json(encryptResponse(r));
       }
