@@ -60,16 +60,16 @@ router.post("/", validateUserToken, decryptAuthRequest, (req, res) => {
               return res.json(encryptResponse(r));
             })
             .catch((err) => {
-              r.status = statusCodes.BAD_INPUT;
+              r.status = statusCodes.FORBIDDEN;
               r.data = {
-                message: "invalid input",
+                message: "",
               };
               return res.json(encryptResponse(r));
             });
         } else {
-          r.status = statusCodes.BAD_REQUEST;
+          r.status = statusCodes.FORBIDDEN;
           r.data = {
-            message: "invalid input",
+            message: "invalid permission",
           };
           return res.json(encryptResponse(r));
         }
@@ -111,9 +111,9 @@ router.post("/", validateUserToken, decryptAuthRequest, (req, res) => {
               return res.json(encryptResponse(r));
             });
         } else {
-          r.status = statusCodes.BAD_REQUEST;
+          r.status = statusCodes.FORBIDDEN;
           r.data = {
-            message: "invalid input",
+            message: "invalid permission",
           };
           return res.json(encryptResponse(r));
         }
