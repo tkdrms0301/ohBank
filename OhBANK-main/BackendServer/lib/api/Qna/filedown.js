@@ -6,7 +6,6 @@ var statusCodes = require("../../statusCodes");
 var { validateUserToken } = require("../../../middlewares/validateToken");
 var { encryptResponse } = require("../../../middlewares/crypt");
 var FormData = require("form-data");
-const Readable = require("stream").Readable;
 /**
  * QnA file list route
  * This endpoint allows to view list of files of a question
@@ -15,16 +14,20 @@ const Readable = require("stream").Readable;
  * @param file
  * @return                           - Qna
  */
-var fs = require("fs");
-const { response } = require("express");
+const fs = require("fs");
+const path = require("path");
+const { Readable } = require("stream").Readable;
 
 router.get("/", async (req, res) => {
-  var r = new Response();
-  var filename = req.query.filename;
+  const r = new Response();
+  const requestedFilename = req.query.filename;
 
   try {
-    // upload directory in the path is only allowed
-    if (!filename.startsWith("upload/")) {
+    // 파일 경로 정규화
+    const filename = path.normalize(requestedFilename);
+
+    // 정규화된 디렉토리 확인
+    if (!filename.startsWith("upload" + path.sep)) {
       r.status = statusCodes.BAD_REQUEST;
       r.data = {
         message: "Invalid file path.",
@@ -32,14 +35,14 @@ router.get("/", async (req, res) => {
       return res.json(encryptResponse(r));
     }
 
-    file_data = fs.readFileSync(filename);
-    s = new Readable();
+    const fileData = fs.readFileSync(filename);
+    const s = new Readable();
 
-    filename = filename.split("/");
-    filename = filename[filename.length - 1];
-    res.attachment(filename);
+    // 파일 이름 추출
+    const sanitizedFilename = path.basename(filename);
+    res.attachment(sanitizedFilename);
 
-    s.push(file_data);
+    s.push(fileData);
     s.push(null);
     s.pipe(res);
   } catch (err) {
